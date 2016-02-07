@@ -82,12 +82,11 @@ class Engine(object):
                         # return help on a plugin
                         self.matrix.send_message(
                             room,
-                            self.plugins[segments[1]].__doc__,
-                            msgtype="m.notice"
+                            self.plugins[segments[1]].__doc__
                         )
                     else:
                         # return generic help
-                        self.matrix.send_message(room, self._help(), msgtype="m.notice")
+                        self.matrix.send_message(room, self._help())
                 elif cmd in self.plugins:
                     plugin = self.plugins[cmd]
                     responses = None
@@ -100,14 +99,12 @@ class Engine(object):
                     except CommandNotFoundError as e:
                         self.matrix.send_message(
                             room,
-                            str(e),
-                            msgtype="m.notice"
+                            str(e)
                         )
                     except MatrixRequestError as ex:
                         self.matrix.send_message(
                             room,
-                            "Problem making request: (%s) %s" % (ex.code, ex.content),
-                            msgtype="m.notice"
+                            "Problem making request: (%s) %s" % (ex.code, ex.content)
                         )
 
                     if responses:
@@ -117,8 +114,7 @@ class Engine(object):
                                 if type(res) in [str, unicode]:
                                     self.matrix.send_message(
                                         room,
-                                        res,
-                                        msgtype="m.notice"
+                                        res
                                     )
                                 else:
                                     self.matrix.send_message_event(
@@ -127,21 +123,19 @@ class Engine(object):
                         elif type(responses) in [str, unicode]:
                             self.matrix.send_message(
                                 room,
-                                responses,
-                                msgtype="m.notice"
+                                responses
                             )
                         else:
                             self.matrix.send_message_event(
                                 room, "m.room.message", responses
                             )
             except NebError as ne:
-                self.matrix.send_message(room, ne.as_str(), msgtype="m.notice")
+                self.matrix.send_message(room, ne.as_str())
             except Exception as e:
                 log.exception(e)
                 self.matrix.send_message(
                     room,
-                    "Fatal error when processing command.",
-                    msgtype="m.notice"
+                    "Fatal error when processing command."
                 )
         else:
             try:
