@@ -57,7 +57,7 @@ class SmartHomePlugin(Plugin):
         command = args[1].lower()
         #print(args)
         exe_cmd = "irsend SEND_ONCE %s %s" % (appliance_list[appliance]['target'], appliance_list[appliance]['cmd'][command])
-        os.system()
+        os.system(exe_cmd)
         return "Remote command received!"
 
     def _get_temperature(self):
