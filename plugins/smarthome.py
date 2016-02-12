@@ -3,6 +3,7 @@ from neb.plugins import Plugin
 from timer_thread import PeriodicThread
 import plotly.plotly as py
 import plotly.graph_objs as go
+import json
 import os
 import time
 import datetime
@@ -22,7 +23,7 @@ class SmartHomePlugin(Plugin):
         self.timeAxis = []
         self.period = 8
         self.monitoringThread = PeriodicThread(callback=self._log_temperature, period=self.period, name="logTemp")
-        with open('../config.json') as config_file:
+        with open('./config.json') as config_file:
             plotly_user_config = json.load(config_file)
 
             py.sign_in(plotly_user_config["plotly_username"], plotly_user_config["plotly_api_key"])
