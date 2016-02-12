@@ -73,10 +73,10 @@ class SmartHomePlugin(Plugin):
             img_url = self._plot_temp_data()
             content = {
                 'body': "temperature.png",
-                msgtype': 'm.image',
+                'msgtype': 'm.image',
                 'url': img_url
             }
-            self.matrix.send_message_event(self.event.room_id, "m.room.message", content)
+            self.matrix.send_message_event(event["room_id"], "m.room.message", content)
             return "%s" % getattr(self, "_get_%s" % sensor)()
         else:
             return "%s is currently not available" % sensor;
