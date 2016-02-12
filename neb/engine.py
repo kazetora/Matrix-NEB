@@ -2,6 +2,7 @@ from matrix_client.api import MatrixRequestError
 from neb import NebError
 from neb.plugins import CommandNotFoundError
 from neb.webhook import NebHookServer
+from requests.exceptions import ConnectionError
 
 import json
 import logging as log
@@ -31,7 +32,12 @@ class Engine(object):
                 self.webhook
             )
 
-        sync = self.matrix.initial_sync()
+        while True:
+            try:
+                sync = self.matrix.initial_sync()
+                break
+            except ConnectionError:
+                pass
         log.debug("Notifying plugins of initial sync results")
         for plugin_name in self.plugins:
             plugin = self.plugins[plugin_name]
