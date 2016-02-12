@@ -21,6 +21,8 @@ class SmartHomePlugin(Plugin):
         self.timeAxis = []
         self.period = 8
         self.monitoringThread = PeriodicThread(callback=self._log_temperature, period=self.period, name="logTemp")
+        self._setup_monitoring()
+
         super(Plugin, self).__init__(*args, **kwargs)
     #def on_sync(self, response):
         #print("SSSSSS", response)
@@ -32,7 +34,7 @@ class SmartHomePlugin(Plugin):
         s = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
         try:
             s.open()
-        except SerialException(e):
+        except SerialException:
             print "Port is open"
             pass
 
@@ -42,23 +44,24 @@ class SmartHomePlugin(Plugin):
         temp = struct.unpack('f', dat)
         try:
             s.close()
-        except SerialException(e):
+        except SerialException:
             print "Port is closed"
             pass
-        timeAxis.append(datetime.datetime.now())
-        temperatureData.append(temp)
-        if(len(temperatureData) > 30):
-            temperatureData.pop(0)
-            timeAxis.pop(0)
-        print (timeAxis, temperatureData)
+        self.timeAxis.append(datetime.datetime.now())
+        self.temperatureData.append(temp)
+        if(len(self.temperatureData) > 30):
+            self.temperatureData.pop(0)
+            self.timeAxis.pop(0)
+        print (self.timeAxis, self.temperatureData)
 
     def cmd_get(self, event, *args):
         # for demo
         sensor = args[0];
 
-        if(len(args) > 1) {
+        if(len(args) > 1): 
             # get the image
-        }
+            pass
+ 
         available_sensor = ["temperature"];
         if sensor in available_sensor:
             return getattr(self, "_get_%s" % sensor)();
