@@ -16,7 +16,7 @@ class SmartHomePlugin(Plugin):
     """
     name ="smarthome"
 
-    def __init__(self, *args, *kwargs):
+    def __init__(self, *args, **kwargs):
         self.temperatureData = []
         self.timeAxis = []
         self.period = 8
