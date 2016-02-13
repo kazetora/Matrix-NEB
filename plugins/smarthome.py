@@ -70,7 +70,14 @@ class SmartHomePlugin(Plugin):
 
         available_sensor = ["temperature"];
         if sensor in available_sensor:
-            return "%s\nLast 5 mins: %s" % (getattr(self, "_get_%s" % sensor)(), self._plot_temp_data());
+            img_url = self._plot_temp_data()
+            content = {
+                'body': "temperature.png",
+                msgtype': 'm.image',
+                'url': img_url
+            }
+            self.matrix.send_message_event(self.event.room_id, "m.room.message", content)
+            return "%s" % getattr(self, "_get_%s" % sensor)()
         else:
             return "%s is currently not available" % sensor;
 
@@ -84,7 +91,7 @@ class SmartHomePlugin(Plugin):
         data = [trace]
         plot_url = py.plot(data, filename="temperaturelog")
         print plot_url
-        return plot_url
+        return "%s.png" % plot_url
 
     def cmd_remote(self, event, *args):
         # for demo
