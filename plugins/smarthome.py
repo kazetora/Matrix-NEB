@@ -2,6 +2,7 @@
 from neb.plugins import Plugin
 from timer_thread import PeriodicThread
 import plotly.plotly as py
+import plotly.graph_objs as go
 import os
 import time
 import datetime
@@ -52,21 +53,33 @@ class SmartHomePlugin(Plugin):
         if(len(self.temperatureData) > 30):
             self.temperatureData.pop(0)
             self.timeAxis.pop(0)
-        print (self.timeAxis, self.temperatureData)
+        #print (self.timeAxis, self.temperatureData)
 
     def cmd_get(self, event, *args):
         # for demo
         sensor = args[0];
 
-        if(len(args) > 1): 
+        if(len(args) > 1):
             # get the image
             pass
- 
+
         available_sensor = ["temperature"];
         if sensor in available_sensor:
-            return getattr(self, "_get_%s" % sensor)();
+            return "%s\nLast 5 mins: %s" % (getattr(self, "_get_%s" % sensor)(), self._plot_temp_data());
         else:
             return "%s is currently not available" % sensor;
+
+    def _plot_temp_data(self):
+        trace = go.Scatter(
+            x = self.timeAxis,
+            y = self.temperatureData,
+            mode = 'lines+markers',
+            name = 'Temperature'
+        )
+        data = [trace]
+        plot_url = py.plot(data, filename="temperaturelog")
+        print plot_url
+        return plot_url
 
     def cmd_remote(self, event, *args):
         # for demo
