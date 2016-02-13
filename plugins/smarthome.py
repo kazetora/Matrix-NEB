@@ -22,6 +22,10 @@ class SmartHomePlugin(Plugin):
         self.timeAxis = []
         self.period = 8
         self.monitoringThread = PeriodicThread(callback=self._log_temperature, period=self.period, name="logTemp")
+        with open('../config.json') as config_file:
+            plotly_user_config = json.load(config_file)
+
+            py.sign_in(plotly_user_config["plotly_username"], plotly_user_config["plotly_api_key"])
         self._setup_monitoring()
 
         super(Plugin, self).__init__(*args, **kwargs)
