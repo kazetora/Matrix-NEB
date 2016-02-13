@@ -19,6 +19,7 @@ class SmartHomePlugin(Plugin):
     name ="smarthome"
 
     def __init__(self, *args, **kwargs):
+        self.currentTemperature = 0.0
         self.temperatureData = []
         self.timeAxis = []
         self.period = 8
@@ -54,7 +55,8 @@ class SmartHomePlugin(Plugin):
             print "Port is closed"
             pass
         self.timeAxis.append(datetime.datetime.now())
-        self.temperatureData.append(temp)
+        self.temperatureData.append(temp[0])
+        self.currentTemperature = temp[0]
         if(len(self.temperatureData) > 30):
             self.temperatureData.pop(0)
             self.timeAxis.pop(0)
@@ -130,21 +132,21 @@ class SmartHomePlugin(Plugin):
 
     def _get_temperature(self):
         degree_sign= u'\N{DEGREE SIGN}'
-        s = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
-        try:
-            s.open()
-        except SerialException:
-            print "Port is open"
-            pass
+        # s = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
+        # try:
+        #     s.open()
+        # except SerialException:
+        #     print "Port is open"
+        #     pass
+        #
+        # s.write('2')
+        # time.sleep(2)
+        # dat = s.read(4)
+        # temp = struct.unpack('f', dat)
+        # try:
+        #     s.close()
+        # except SerialException:
+        #     print "Port is closed"
+        #     pass
 
-        s.write('2')
-        time.sleep(2)
-        dat = s.read(4)
-        temp = struct.unpack('f', dat)
-        try:
-            s.close()
-        except SerialException:
-            print "Port is closed"
-            pass
-
-        return "Current Temperature is %.02f%c C" % (temp[0], degree_sign)
+        return "Current Temperature is %.02f%c C" % (self.currentTemperature, degree_sign)
