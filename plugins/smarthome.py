@@ -3,6 +3,7 @@ from neb.plugins import Plugin
 from timer_thread import PeriodicThread
 import plotly.plotly as py
 import plotly.graph_objs as go
+import requests
 import json
 import os
 import time
@@ -72,11 +73,24 @@ class SmartHomePlugin(Plugin):
 
         available_sensor = ["temperature"];
         if sensor in available_sensor:
+            uri = "%s/upload" % self.config.base_url.replace('client/api', 'media')
             img_url = self._plot_temp_data()
+            img_bytes = requests.get(img_url).content
+            res = requests.request('POST',
+                                    uri,
+                                    params={
+                                        'access_token': self.config.token,
+                                        'filename': 'temperature.png'
+                                    },
+                                    data=img_bytes,
+                                    headers={
+                                        'Content-Type': 'image/jpeg'
+                                    })
+            mxc = res.json()
             content = {
                 'body': "temperature.png",
                 'msgtype': 'm.image',
-                'url': img_url
+                'url': mxc['content_uri']
             }
             self.matrix.send_message_event(event["room_id"], "m.room.message", content)
             return "%s" % getattr(self, "_get_%s" % sensor)()
